@@ -29,3 +29,10 @@ def convertir_archivo():
         'formato_destino': formato_destino,
         'base64_Arhivo': nuevoArchivo
     }
+
+@app.route('/saludo', methods=['GET'])
+def saludo():
+    return "Hola Mundo"
+if __name__ == '__main__':
+   app.run(host="0.0.0.0")
+
