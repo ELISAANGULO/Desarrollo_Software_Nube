@@ -3,7 +3,7 @@ Repositorio para la asignatura de Cloud
 
 Aplicacion realizada en python para ejecutar tenga en cuenta las instalaciones para probarla 
 
-*pip install Flask
+* pip install Flask
 
 *pip install py7zr
 
