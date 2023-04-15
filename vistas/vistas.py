@@ -47,3 +47,48 @@ class VistaLogIn(Resource):
         else:
             token_de_acceso = create_access_token(identity=usuario.id)
             return {"mensaje": "Inicio de sesión exitoso", "token": token_de_acceso, "id": usuario.id}
+        
+class VistaConvertir(Resource):
+    @jwt_required()
+    def get(self):
+        session = Session()
+        conversiones = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True)).all()
+        result = conversion_schema.dump(conversiones, many=True)
+        return jsonify(result)
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        nombre_archivo = data['nombre_archivo']
+        formato_original = data['formato_original']
+        formato_destino = data['formato_destino']
+        base64_Arhivo = data['base64_Arhivo']
+
+        archivo_bytes = base64.b64decode(base64_Arhivo)
+        # Escribir los bytes en un archivo
+        with open(nombre_archivo, 'wb') as f:
+            f.write(archivo_bytes)
+        archivo = Archivo(nombre_archivo)
+        nuevoArchivo=""
+        if (formato_destino == "pdf"):
+            nuevoArchivo = archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
+        elif (formato_destino == "tar.gz"):
+            nuevoArchivo=archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
+        elif (formato_destino == "zip"):
+            nuevoArchivo=archivo.comprimir_a_zip("mi_archivo.zip")
+        elif (formato_destino == "7z"):
+            nuevoArchivo=archivo.comprimir_a_7z("mi_archivo.7z")
+        session = Session()
+        conversion_exist = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.archivo_base == base64_Arhivo, Conversion.nombre_archivo == nombre_archivo, Conversion.extension_original == formato_original, Conversion.extension_destino == formato_destino)).first()
+        if(conversion_exist is None):
+            conversion = Conversion(nombre_archivo =nombre_archivo, archivo_base = base64_Arhivo, extension_original = formato_original, extension_destino = formato_destino, archivo_convertido = nuevoArchivo, disponible = True, usuario_id = get_jwt_identity(), fecha_subida = datetime.now(), status = "processed")
+            session.add(conversion)
+        else:
+            conversion_exist.fecha_subida = datetime.now()
+        session.commit()
+        return {
+            'mensaje': 'El archivo se ha convertido con éxito.',
+            'nombre_archivo': nombre_archivo,
+            'formato_original': formato_original,
+            'formato_destino': formato_destino,
+            'base64_Arhivo': nuevoArchivo
+        }
