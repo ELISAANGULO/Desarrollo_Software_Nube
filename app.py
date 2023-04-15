@@ -1,8 +1,15 @@
 from flask import Flask, jsonify, request
 import base64
-from Archivo import Archivo
-app = Flask(__name__)
+from flask_jwt_extended import JWTManager
+from flask_cors import CORS
+from flask_restful import Api
+from modelos import Base, engine
+import Archivo
 
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'frase-secreta'
+
+Base.metadata.create_all(engine)
 
 @app.route('/convertir', methods=['POST'])
 def convertir_archivo():
