@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  web:
+    build: .
+    environment:
+      DB_HOST: "db"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    links:
+      - db
+    networks:
+      - default
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=conversor
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=172.17.0.2  # <-- Set the POSTGRES_HOST variable
+    ports:
+      - "5432:5432"
+    networks:
+      - default

@@ -111,3 +111,18 @@ class VistaConversion(Resource):
             return {"message" : f"La tarea de conversión con id: {id_task}, no existe o no tiene autorización para acceder a ella"}, 409
         session.delete(conversion)
         return 204
+    
+class VistaSaludo(Resource):
+    @jwt_required()
+    def get(self):
+        return "Hola Mundo"
+
+class VistaFiles(Resource):
+    @jwt_required()
+    def get(self, filename):
+        session = Session()
+        conversion = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.nombre_archivo == filename)).first()
+        if(conversion is None):
+            return {"message" : f"La tarea de conversión con nombre: {filename}, no existe o no tiene autorización para acceder a ella"}, 409
+        response = {"nombre_archivo" : f"{conversion.nombre_archivo}", "archivo_original" : f"{conversion.archivo_base}", "archivo_procesado" : f"{conversion.archivo_convertido}"}
+        return response
