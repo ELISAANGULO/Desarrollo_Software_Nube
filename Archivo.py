@@ -21,17 +21,7 @@ class Archivo:
         self.nuevoArchivo = nombre_archivo_tar_gz
         return self.convertString64()
 
-    def comprimir_a_zip(self, nombre_archivo_zip):
-        """
-        Comprime un archivo en formato zip con un nombre especificado.
-        :param nombre_archivo_zip: Nombre del archivo zip de salida.
-        :type nombre_archivo_zip: str
-        """
-        with zipfile.ZipFile(nombre_archivo_zip, 'w') as f:
-            f.write(self.ruta_archivo)
-        print(f'Se ha creado el archivo zip: {nombre_archivo_zip}')
-        self.nuevoArchivo = nombre_archivo_zip
-        return self.convertString64()
+  
 
     def convertString64(self):
         print(self.nuevoArchivo)
