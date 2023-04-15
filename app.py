@@ -20,6 +20,8 @@ def convertir_archivo():
     if (formato_destino == "tar.gz"):
         
         nuevoArchivo = archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
+    elif (formato_destino == "zip"):
+       nuevoArchivo=archivo.comprimir_a_zip("mi_archivo.zip")
     return {
         'mensaje': 'El archivo se ha convertido con éxito.',
         'nombre_archivo': nombre_archivo,
