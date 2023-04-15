@@ -92,3 +92,22 @@ class VistaConvertir(Resource):
             'formato_destino': formato_destino,
             'base64_Arhivo': nuevoArchivo
         }
+
+class VistaConversion(Resource):
+    @jwt_required()
+    def get(self, id_task):
+        session = Session()
+        conversion = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.id == id_task)).first()
+        if(conversion is None):
+            return {"message" : f"La tarea de conversión con id: {id_task}, no existe o no tiene autorización para verla"}, 409
+        result = conversion_schema.dump(conversion)
+        return jsonify(result)
+    
+    @jwt_required()
+    def delete(self, id_task):
+        session = Session()
+        conversion = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.id == id_task)).first()
+        if(conversion is None):
+            return {"message" : f"La tarea de conversión con id: {id_task}, no existe o no tiene autorización para acceder a ella"}, 409
+        session.delete(conversion)
+        return 204

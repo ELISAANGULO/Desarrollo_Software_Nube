@@ -5,7 +5,7 @@ from flask_cors import CORS
 from flask_restful import Api
 from modelos import Base, engine
 import Archivo
-from vistas import VistaSignIn, VistaLogIn, VistaConvertir
+from vistas import VistaSignIn, VistaLogIn, VistaConvertir,VistaConversion
 
 
 app = Flask(__name__)
@@ -18,6 +18,7 @@ api = Api(app)
 api.add_resource(VistaSignIn, '/api/auth/signup')
 api.add_resource(VistaLogIn, '/api/auth/login')
 api.add_resource(VistaConvertir, '/api/tasks')
+api.add_resource(VistaConversion, '/api/tasks/<int:id_task>')
 
 
 if __name__ == '__main__':
