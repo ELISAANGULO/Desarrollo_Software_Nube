@@ -9,6 +9,24 @@ class Archivo:
         self.ruta_archivo = ruta_archivo
         self.nuevoArchivo=""
 
+    def comprimir_a_7z(self, nombre_archivo_7z):
+        """
+        Comprime un archivo de entrada en formato 7z con un nombre especificado.
+        :param nombre_archivo_7z: Nombre del archivo 7z de salida.
+        :type nombre_archivo_7z: str
+        """
+        # Verificar si el archivo de entrada existe
+        if not os.path.exists(self.ruta_archivo):
+            print(
+                f'Error: El archivo de entrada {self.ruta_archivo} no existe.')
+            return
+        with py7zr.SevenZipFile(nombre_archivo_7z, mode='w') as z:
+            # Agregar el archivo de entrada a la compresión
+            z.write(self.ruta_archivo)
+        print(f'Se ha creado el archivo 7z: {nombre_archivo_7z}')
+        self.nuevoArchivo = nombre_archivo_7z
+        return self.convertString64()
+
     def comprimir_a_tar_gz(self, nombre_archivo_tar_gz):
         """
         Comprime un archivo en formato tar.gz con un nombre especificado.
