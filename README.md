@@ -5,21 +5,21 @@ Aplicacion realizada en python para ejecutar tenga en cuenta las instalaciones p
 
 * pip install Flask
 
-*pip install py7zr
+* pip install py7zr
 
-*pip install flask_sqlalchemy
+* pip install flask_sqlalchemy
 
-*pip install marshmallow_sqlalchemy
+* pip install marshmallow_sqlalchemy
 
-*pip install sqlalchemy
+* pip install sqlalchemy
 
-*pip install flask_cors
+* pip install flask_cors
 
-*pip install psycopg2
+* pip install psycopg2
 
-*pip install flask_restful
+* pip install flask_restful
 
-*pip install flask_jwt_extended
+* pip install flask_jwt_extended
 
 
 Esta aplicacion esta diseñada para correr exclusivamente en docker para esto ubiquese en la carpeta del proyecto y corra el comando
