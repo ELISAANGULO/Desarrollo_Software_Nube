@@ -6,12 +6,21 @@ from flask_restful import Api
 from modelos import Base, engine
 import Archivo
 from vistas import VistaSignIn, VistaLogIn, VistaConvertir,VistaConversion, VistaFiles, VistaSaludo
-
+import datetime
 
 app = Flask(__name__)
 app.config['JWT_SECRET_KEY'] = 'frase-secreta'
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(hours=2)
+app.config['SQLALCHEMY_POOL_SIZE'] = 1002
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 1002
 
 Base.metadata.create_all(engine)
+
+@app.teardown_request
+def teardown_request(exception=None):
+   engine.dispose() # cerrar todas las conexiones de la piscina de SQLAlchemy
+
+
 cors = CORS(app)
 
 api = Api(app)

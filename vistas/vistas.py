@@ -26,7 +26,7 @@ class VistaSignIn(Resource):
                     usuario=request.json["usuario"], contrasena=contrasena_encriptada, correo=request.json["correo"])
                 session.add(nuevo_usuario)
                 session.commit()
-                # session.close()
+                session.close()
                 return {"mensaje": "usuario creado exitosamente", "id": nuevo_usuario.id}
             else:
                 return "El usuario ya existe", 400
@@ -41,7 +41,7 @@ class VistaLogIn(Resource):
             request.json["contrasena"].encode('utf-8')).hexdigest()
         usuario = session.query(Usuario).filter(or_(Usuario.usuario == request.json["usuario"], Usuario.correo == request.json["usuario"]),
                                                 Usuario.contrasena == contrasena_encriptada).first()
-        session.commit()
+        session.close()
         if usuario is None:
             return "Nombre de usuario o contraseña incorrecta", 400
         else:
@@ -54,6 +54,7 @@ class VistaConvertir(Resource):
         session = Session()
         conversiones = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True)).all()
         result = conversion_schema.dump(conversiones, many=True)
+        session.close()
         return jsonify(result)
     @jwt_required()
     def post(self):
@@ -85,6 +86,9 @@ class VistaConvertir(Resource):
         else:
             conversion_exist.fecha_subida = datetime.now()
         session.commit()
+        session.close()
+        
+
         return {
             'mensaje': 'El archivo se ha convertido con éxito.',
             'nombre_archivo': nombre_archivo,
@@ -101,6 +105,7 @@ class VistaConversion(Resource):
         if(conversion is None):
             return {"message" : f"La tarea de conversión con id: {id_task}, no existe o no tiene autorización para verla"}, 409
         result = conversion_schema.dump(conversion)
+        session.close()
         return jsonify(result)
     
     @jwt_required()
@@ -110,6 +115,7 @@ class VistaConversion(Resource):
         if(conversion is None):
             return {"message" : f"La tarea de conversión con id: {id_task}, no existe o no tiene autorización para acceder a ella"}, 409
         session.delete(conversion)
+        session.close()
         return 204
     
 class VistaSaludo(Resource):
@@ -125,4 +131,5 @@ class VistaFiles(Resource):
         if(conversion is None):
             return {"message" : f"La tarea de conversión con nombre: {filename}, no existe o no tiene autorización para acceder a ella"}, 409
         response = {"nombre_archivo" : f"{conversion.nombre_archivo}", "archivo_original" : f"{conversion.archivo_base}", "archivo_procesado" : f"{conversion.archivo_convertido}"}
+        session.close()
         return response
