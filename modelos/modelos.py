@@ -6,9 +6,9 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 # Conexión a la base de datos
-db_uri = 'postgresql://postgres:postgres@db:5432/conversor'
-#engine = create_engine(db_uri)
-engine = create_engine('postgresql://postgres:postgres@localhost:5432/conversor')
+db_uri = 'postgresql://postgres:andes@35.196.5.117:5432/conversor'
+engine = create_engine(db_uri)
+#engine = create_engine('postgresql://postgres:postgres@localhost:5432/conversor')
 Session = sessionmaker(bind=engine)
 Base = declarative_base()
 
