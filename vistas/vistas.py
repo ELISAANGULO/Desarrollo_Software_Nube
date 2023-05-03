@@ -119,7 +119,7 @@ class VistaConversion(Resource):
         return 204
     
 class VistaSaludo(Resource):
-    @jwt_required()
+    #@jwt_required()
     def get(self):
         return "Hola Mundo"
 
