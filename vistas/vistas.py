@@ -1,3 +1,4 @@
+import numpy as np
 import base64
 from datetime import datetime
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
@@ -7,8 +8,8 @@ from flask_restful import Resource
 from sqlalchemy import and_, or_
 from Archivo import Archivo
 from modelos import Usuario, Session, Conversion, ConversionSchema
-
 conversion_schema = ConversionSchema()
+
 
 
 class VistaSignIn(Resource):
@@ -67,7 +68,8 @@ class VistaConvertir(Resource):
         archivo_bytes = base64.b64decode(base64_Arhivo)
         # Escribir los bytes en un archivo
         with open(nombre_archivo, 'wb') as f:
-            f.write(archivo_bytes)
+            #f.write(archivo_bytes)
+            f.write(np.array(archivo_bytes))    
         archivo = Archivo(nombre_archivo)
         nuevoArchivo=""
         if (formato_destino == "pdf"):
@@ -96,6 +98,8 @@ class VistaConvertir(Resource):
             'formato_destino': formato_destino,
             'base64_Arhivo': nuevoArchivo
         }
+
+
 
 class VistaConversion(Resource):
     @jwt_required()

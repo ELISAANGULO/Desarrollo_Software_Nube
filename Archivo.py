@@ -4,27 +4,32 @@ import tarfile
 #import aspose.words as aw
 import zipfile
 import base64
+from utils import gcpCloudStorage
+import threading
+import random
+
 class Archivo:
     def __init__(self, ruta_archivo):
         self.ruta_archivo = ruta_archivo
         self.nuevoArchivo=""
 
     def comprimir_a_7z(self, nombre_archivo_7z):
-        """
-        Comprime un archivo de entrada en formato 7z con un nombre especificado.
-        :param nombre_archivo_7z: Nombre del archivo 7z de salida.
-        :type nombre_archivo_7z: str
-        """
-        # Verificar si el archivo de entrada existe
+        
         if not os.path.exists(self.ruta_archivo):
             print(
                 f'Error: El archivo de entrada {self.ruta_archivo} no existe.')
             return
         with py7zr.SevenZipFile(nombre_archivo_7z, mode='w') as z:
             # Agregar el archivo de entrada a la compresión
+            print(self.ruta_archivo)
             z.write(self.ruta_archivo)
         print(f'Se ha creado el archivo 7z: {nombre_archivo_7z}')
         self.nuevoArchivo = nombre_archivo_7z
+        fileForGCP="miFile"+ str (random.randint(0, 999999))+".7z"
+        gpcThread = threading.Thread(
+            target=gcpCloudStorage.upload_to_bucket, args=(fileForGCP, nombre_archivo_7z))
+        gpcThread.start()
+        
         return self.convertString64()
 
     def comprimir_a_tar_gz(self, nombre_archivo_tar_gz):
@@ -37,6 +42,12 @@ class Archivo:
             archivo_tar_gz.add(self.ruta_archivo)
         print(f'Se ha creado el archivo tar.gz: {nombre_archivo_tar_gz}')
         self.nuevoArchivo = nombre_archivo_tar_gz
+     
+        fileForGCP = "miFile" + str(random.randint(0, 999999))+".tar.gz"
+        gpcThread = threading.Thread(
+            target=gcpCloudStorage.upload_to_bucket, args=(fileForGCP, nombre_archivo_tar_gz))
+        gpcThread.start()
+        
         return self.convertString64()
 
     def comprimir_a_zip(self, nombre_archivo_zip):
@@ -49,7 +60,13 @@ class Archivo:
             f.write(self.ruta_archivo)
         print(f'Se ha creado el archivo zip: {nombre_archivo_zip}')
         self.nuevoArchivo = nombre_archivo_zip
+        fileForGCP = "miFile" + str(random.randint(0, 999999))+".zip"
+        gpcThread = threading.Thread(
+            target=gcpCloudStorage.upload_to_bucket, args=(fileForGCP, nombre_archivo_zip))
+        gpcThread.start()
         return self.convertString64()
+
+  
 
     def convertString64(self):
         print(self.nuevoArchivo)
