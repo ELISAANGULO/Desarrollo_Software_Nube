@@ -6,7 +6,7 @@ import zipfile
 import base64
 from utils import gcpCloudStorage
 import threading
-import random
+
 
 class Archivo:
     def __init__(self, ruta_archivo):
@@ -25,11 +25,11 @@ class Archivo:
             z.write(self.ruta_archivo)
         print(f'Se ha creado el archivo 7z: {nombre_archivo_7z}')
         self.nuevoArchivo = nombre_archivo_7z
-        fileForGCP="miFile"+ str (random.randint(0, 999999))+".7z"
-        gpcThread = threading.Thread(
-            target=gcpCloudStorage.upload_to_bucket, args=(fileForGCP, nombre_archivo_7z))
-        gpcThread.start()
         
+        # gpcThread = threading.Thread(
+        #     target=gcpCloudStorage.upload_to_bucket, args=(fileForGCP, nombre_archivo_7z))
+        # gpcThread.start()
+        #gcpCloudStorage.upload_to_bucket(fileForGCP,nombre_archivo_7z )
         return self.convertString64()
 
     def comprimir_a_tar_gz(self, nombre_archivo_tar_gz):

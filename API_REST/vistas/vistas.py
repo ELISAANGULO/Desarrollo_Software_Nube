@@ -8,6 +8,7 @@ from flask_restful import Resource
 from sqlalchemy import and_, or_
 from Archivo import Archivo
 from modelos import Usuario, Session, Conversion, ConversionSchema
+import random
 conversion_schema = ConversionSchema()
 
 
@@ -72,6 +73,7 @@ class VistaConvertir(Resource):
             f.write(np.array(archivo_bytes))    
         archivo = Archivo(nombre_archivo)
         nuevoArchivo=""
+        fileForGCP="miFile"+ str (random.randint(0, 999999))+"."+ formato_destino
         if (formato_destino == "pdf"):
             nuevoArchivo = archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
         elif (formato_destino == "tar.gz"):
@@ -83,13 +85,13 @@ class VistaConvertir(Resource):
         session = Session()
         conversion_exist = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.archivo_base == base64_Arhivo, Conversion.nombre_archivo == nombre_archivo, Conversion.extension_original == formato_original, Conversion.extension_destino == formato_destino)).first()
         if(conversion_exist is None):
-            conversion = Conversion(nombre_archivo =nombre_archivo, archivo_base = base64_Arhivo, extension_original = formato_original, extension_destino = formato_destino, archivo_convertido = nuevoArchivo, disponible = True, usuario_id = get_jwt_identity(), fecha_subida = datetime.now(), status = "processed")
+            conversion = Conversion(nombre_archivo =nombre_archivo, archivo_base = base64_Arhivo, extension_original = formato_original, extension_destino = formato_destino, archivo_convertido = nuevoArchivo, disponible = True, usuario_id = get_jwt_identity(), fecha_subida = datetime.now(), status = "uploaded")
             session.add(conversion)
         else:
             conversion_exist.fecha_subida = datetime.now()
         session.commit()
         session.close()
-        
+        #Publicar mensaje a rabbit
 
         return {
             'mensaje': 'El archivo se ha convertido con éxito.',
