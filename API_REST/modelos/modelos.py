@@ -23,14 +23,17 @@ class Usuario(Base):
 class Conversion(Base):
     __tablename__ = 'conversiones'
     id = Column(Integer, primary_key=True)
-    nombre_archivo = Column(String)
-    archivo_base = Column(Text)
+    nombre_archivo_original = Column(String)
+    nombre_archivo_original_gcp = Column(String)
+    nombre_archivo_convertido_gcp = Column(String)
+    archivo_base64_original = Column(Text)
+    archivo__base64_convertido = Column(Text)
     extension_original = Column(String)
-    archivo_convertido = Column(Text)
     extension_destino = Column(String)
     disponible = Column(Boolean)
     usuario_id = Column(Integer, ForeignKey('usuarios.id'))
     fecha_subida = Column(DateTime)
+    fecha_modificacion = Column(DateTime)
     status = Column(String)
 
 class UsuarioSchema(Schema):
