@@ -53,9 +53,11 @@ class ListenerServicioConsulta():
               nombre_archivo_original_gcp = aDict["nombre_archivo_original_gcp"]
               nombre_archivo_convertido_gcp = aDict["nombre_archivo_convertido_gcp"]
               
-              conversion = session.query(Conversion).filter(
-                  Conversion.nombre_archivo_convertido_gcp == nombre_archivo_convertido_gcp ).first()
-              
+            #   conversion = session.query(Conversion).filter(
+            #       Conversion.nombre_archivo_convertido_gcp == nombre_archivo_convertido_gcp ).first()
+              print("###########"+nombre_archivo_convertido_gcp)
+              conversion = session.query(Conversion).filter(Conversion.nombre_archivo_convertido_gcp == nombre_archivo_convertido_gcp).first()
+              #conversion = Conversion.query.filter_by(nombre_archivo_convertido_gcp=nombre_archivo_convertido_gcp).first()
               base64_archivo_original = conversion.archivo_base64_original
               archivo_bytes = base64.b64decode(base64_archivo_original)
               formato_destino = conversion.extension_destino
