@@ -78,7 +78,7 @@ class ListenerServicioConsulta():
               GcpCloudStorage.upload_to_bucket(
                   nombre_archivo_convertido_gcp, nombre_archivo_convertido_gcp, "Convertidos/")
               GcpCloudStorage.upload_to_bucket(
-                  nombre_archivo_original_gcp, nombre_archivo_original_gcp, "Original/")
+                  nombre_archivo_original_gcp, nombre_archivo_original_gcp, "Originales/")
               conversion.disponible = True
               #conversion.archivo__base64_convertido = nuevoArchivo
               conversion.status= 'processed'
