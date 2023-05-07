@@ -1,16 +1,16 @@
-import numpy as np
-import base64
 from datetime import datetime
+import threading
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask import request, jsonify
 import hashlib
 from flask_restful import Resource
 from sqlalchemy import and_, or_
-from Archivo import Archivo
-from modelos import Usuario, Session, Conversion, ConversionSchema
+from vistas.RabbitConnections import RabbitConnection
+from modelos import Usuario, Session, Conversion, ConversionSchema,UsuarioSchema
 import random
+usuario_schema = UsuarioSchema
 conversion_schema = ConversionSchema()
-
+rabbit_connection = RabbitConnection()
 
 
 class VistaSignIn(Resource):
@@ -38,18 +38,21 @@ class VistaSignIn(Resource):
 
 class VistaLogIn(Resource):
     def post(self):
-        session = Session()
-        contrasena_encriptada = hashlib.md5(
-            request.json["contrasena"].encode('utf-8')).hexdigest()
-        usuario = session.query(Usuario).filter(or_(Usuario.usuario == request.json["usuario"], Usuario.correo == request.json["usuario"]),
-                                                Usuario.contrasena == contrasena_encriptada).first()
-        session.close()
-        if usuario is None:
-            return "Nombre de usuario o contraseña incorrecta", 400
-        else:
-            token_de_acceso = create_access_token(identity=usuario.id)
-            return {"mensaje": "Inicio de sesión exitoso", "token": token_de_acceso, "id": usuario.id}
-        
+        try:
+            session = Session()
+            contrasena_encriptada = hashlib.md5(
+                request.json["contrasena"].encode('utf-8')).hexdigest()
+            usuario = session.query(Usuario).filter(or_(Usuario.usuario == request.json["usuario"], Usuario.correo == request.json["usuario"]),
+                                                    Usuario.contrasena == contrasena_encriptada).first()
+            session.close()
+            if usuario is None:
+                return "Nombre de usuario o contraseña incorrecta", 400
+            else:
+                token_de_acceso = create_access_token(identity=usuario.id)
+                return {"mensaje": "Inicio de sesión exitoso", "token": token_de_acceso, "id": usuario.id}
+        except Exception as e:
+            print("Se presentó el siguiente error: ", e)
+
 class VistaConvertir(Resource):
     @jwt_required()
     def get(self):
@@ -58,50 +61,49 @@ class VistaConvertir(Resource):
         result = conversion_schema.dump(conversiones, many=True)
         session.close()
         return jsonify(result)
+    
     @jwt_required()
     def post(self):
-        data = request.get_json()
-        nombre_archivo = data['nombre_archivo']
-        formato_original = data['formato_original']
-        formato_destino = data['formato_destino']
-        base64_Arhivo = data['base64_Arhivo']
+        try:
+            usuario_id = get_jwt_identity()
+            data = request.get_json()
+            nombre_archivo = data['nombre_archivo']
+            formato_original = data['formato_original']
+            formato_destino = data['formato_destino']
+            base64_Arhivo = data['base64_Arhivo']
+            fileForGCP="myFile"+ str (random.randint(0, 9999999))+"."+ formato_destino
+            nombre_original_gcp = nombre_archivo.split(".")[0] + str (random.randint(0, 9999999))+"."+formato_original
+            conversion = Conversion(nombre_archivo_original = nombre_archivo, 
+                                    nombre_archivo_original_gcp = nombre_original_gcp,
+                                    nombre_archivo_convertido_gcp = fileForGCP,
+                                    archivo_base64_original = base64_Arhivo, 
+                                    extension_original = formato_original, 
+                                    extension_destino = formato_destino,
+                                    disponible = False, 
+                                    usuario_id = usuario_id,
+                                    fecha_subida = datetime.now(), 
+                                    status = "uploaded")
+            myThreadSave = threading.Thread(
+            target= SaveConvertion, args=(conversion, ""))
+            myThreadSave.start()
+            conver = {"nombre_archivo_original" : nombre_archivo,
+                      "nombre_archivo_original_gcp" : nombre_original_gcp,
+                      "nombre_archivo_convertido_gcp": fileForGCP,
+                      "usuario_id": usuario_id}
+            myThread = threading.Thread(
+            target=rabbit_connection.publishMessage, args=(conver, ""))
+            myThread.start()
+            return {
+                'mensaje': 'El archivo ha sido cargado con exito, podrá acceder a él en algunos minutos'
+            }
+        except Exception as e:
+            print("Se presentó el siguiente error: ", e)
 
-        archivo_bytes = base64.b64decode(base64_Arhivo)
-        # Escribir los bytes en un archivo
-        with open(nombre_archivo, 'wb') as f:
-            #f.write(archivo_bytes)
-            f.write(np.array(archivo_bytes))    
-        archivo = Archivo(nombre_archivo)
-        nuevoArchivo=""
-        fileForGCP="miFile"+ str (random.randint(0, 999999))+"."+ formato_destino
-        if (formato_destino == "pdf"):
-            nuevoArchivo = archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
-        elif (formato_destino == "tar.gz"):
-            nuevoArchivo=archivo.comprimir_a_tar_gz("mi_archivo.tar.gz")
-        elif (formato_destino == "zip"):
-            nuevoArchivo=archivo.comprimir_a_zip("mi_archivo.zip")
-        elif (formato_destino == "7z"):
-            nuevoArchivo=archivo.comprimir_a_7z("mi_archivo.7z")
-        session = Session()
-        conversion_exist = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.archivo_base == base64_Arhivo, Conversion.nombre_archivo == nombre_archivo, Conversion.extension_original == formato_original, Conversion.extension_destino == formato_destino)).first()
-        if(conversion_exist is None):
-            conversion = Conversion(nombre_archivo =nombre_archivo, archivo_base = base64_Arhivo, extension_original = formato_original, extension_destino = formato_destino, archivo_convertido = nuevoArchivo, disponible = True, usuario_id = get_jwt_identity(), fecha_subida = datetime.now(), status = "uploaded")
-            session.add(conversion)
-        else:
-            conversion_exist.fecha_subida = datetime.now()
-        session.commit()
-        session.close()
-        #Publicar mensaje a rabbit
-
-        return {
-            'mensaje': 'El archivo se ha convertido con éxito.',
-            'nombre_archivo': nombre_archivo,
-            'formato_original': formato_original,
-            'formato_destino': formato_destino,
-            'base64_Arhivo': nuevoArchivo
-        }
-
-
+def SaveConvertion(conversion, cola):
+    session = Session()
+    session.add(conversion)
+    session.commit()
+    session.close()
 
 class VistaConversion(Resource):
     @jwt_required()
@@ -125,7 +127,6 @@ class VistaConversion(Resource):
         return 204
     
 class VistaSaludo(Resource):
-    #@jwt_required()
     def get(self):
         return "Hola Mundo"
 
@@ -133,9 +134,15 @@ class VistaFiles(Resource):
     @jwt_required()
     def get(self, filename):
         session = Session()
-        conversion = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.nombre_archivo == filename)).first()
+        conversion = session.query(Conversion).filter(and_(Conversion.usuario_id ==get_jwt_identity(), Conversion.disponible == True, Conversion.nombre_archivo_original_gcp == filename)).first()
         if(conversion is None):
             return {"message" : f"La tarea de conversión con nombre: {filename}, no existe o no tiene autorización para acceder a ella"}, 409
-        response = {"nombre_archivo" : f"{conversion.nombre_archivo}", "archivo_original" : f"{conversion.archivo_base}", "archivo_procesado" : f"{conversion.archivo_convertido}"}
+        if conversion.status != "processed":
+            return {"message" : f"La tarea de conversión con nombre: {filename}, aún no ha sido procesada"}, 409
+        base_url_original_gcp = "https://storage.googleapis.com/desarrollocloud2018461201105/Originales/"
+        base_url_convertido_gcp = "https://storage.googleapis.com/desarrollocloud2018461201105/Convertidos/"
+        url_archivo_original = base_url_original_gcp + conversion.nombre_archivo_original_gcp
+        url_archivo_convertido = base_url_convertido_gcp + conversion.nombre_archivo_convertido_gcp
+        response = {"nombre_archivo" : conversion.nombre_archivo_original, "url_archivo_original" : url_archivo_original, "url_archivo_convertido" : url_archivo_convertido}
         session.close()
         return response
