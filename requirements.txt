@@ -4,9 +4,9 @@ flask_sqlalchemy
 marshmallow_sqlalchemy
 sqlalchemy
 flask_cors
-psycopg2
 flask_restful
 flask_jwt_extended
 numpy
 gcpCloudStorage
 tarfile
+pika

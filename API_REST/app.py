@@ -1,10 +1,8 @@
 from flask import Flask, jsonify, request
-import base64
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_restful import Api
 from modelos import Base, engine
-import Archivo
 from vistas import VistaSignIn, VistaLogIn, VistaConvertir,VistaConversion, VistaFiles, VistaSaludo
 import datetime
 
@@ -15,7 +13,6 @@ app.config['SQLALCHEMY_POOL_SIZE'] = 1002
 app.config['SQLALCHEMY_POOL_TIMEOUT'] = 1002
 
 Base.metadata.create_all(engine)
-
 @app.teardown_request
 def teardown_request(exception=None):
    engine.dispose() # cerrar todas las conexiones de la piscina de SQLAlchemy
