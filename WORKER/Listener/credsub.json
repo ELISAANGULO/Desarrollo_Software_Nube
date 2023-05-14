@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "amazing-limiter-382016",
+  "private_key_id": "a1aa162d3d16dd05f12ffc8e3c23b2691af7d9e7",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCPFjKZyM47QO0M\n+dZeOPVFHPgcqBkr31KuATZqyfw3daINgMnxXTTVP3uJaoMTwC18H+P9TqsvTnGu\nQNUCBGhCN0+y0ou2+jaHgJ+j/Uwu1LYd/BbV3zNTaBy5iVI6Q4T2tS+97U7WvteG\nGXm49obdzz2+jMuamHGcX+OQCZGBpdOw83W5720aSVo90eOM3rfK8r28jNPU+tfA\nkw0vKDzaFJGmH9gbc++3DJvRUPRK+A5YiqMUo+4qmFRZKTtnAvr1rkRyiuULP70g\nxmf8VPMPjQjIDvbdJOT1XSiRo+vjdnwMPp9/NQPYOMutWHma/tWGJr7sRNUiiMUG\n1Lb3cgzZAgMBAAECggEAPax7sv1ypuedRXKKi6JRVbDe4Lsz3k0r/gRXyD+3jtAN\nQXS5lmduVlw+i0R1qxWyhUXZp105O/K73TfkmDH+Hkxo9dL6lavTxSQTq0OKisT0\nmogF77l9Df5aIz6lSqe/r/b41QxsZvNrQknIxYi9KO4i1vco60G59oT+OR9msFJ8\nplJTYnCUDf9KoTEKCM8XcyL3+gmOCCS0oTVG+PZuj4gQaYuKbcb1t0g7PgYjLURn\nrxR7+oQp2M3cD6GTtIGLsJJtzy6Cz+3c9H4/N52gaqxvzwE2jUfUcRJVHq0oiU66\nGufQZ7xg1vnYlFguSDcHWRuVAhdA8p9naae32fB4YQKBgQDAZFabxvWIkEL1/P0R\nCHxzxYe2BhzPVE/ElDJ4UBGvfIm2Fb2P61XU/FcK4vxWURiPT7eAch9Ri4bDgpgT\n19zynyoZ2MBOnjtXhVA8X+vH03frwdQ9K4h6dJV9Qx3RWjGGKigLKOVaQiMVKKnN\n+vaZi4GIaaEzG+qANh4/2cNNCwKBgQC+ZMPEzuhJ6HaLZjVdMbkL9Tp/unvVptnw\niXNuGXmFHmghXhrnwATXrp7HLWTGHFCNbjcolsWIa9Ay09VY8xRXMxSaPLvaFUkC\nxHfN4w4bkmMHdd8Iu7QJIF141kwJqE5tWXq+058eNaJw3IvYpPyQzb2pqZsfb2Dq\nLgdvV+XUKwKBgAQJVuPXzcj6tdzxXOHhmrLXHxzLjgkvjKjkLxblHyneZAlE9YAy\ngM+CJ9Vbo82vz+MZ2hDA1DVixwYNFGG+Mq2Id1qpeIdtvHL+ogtSO+EqZ6azn19V\nLXzcO1KweMyupsFY2xQ43G8DWjcUblObA1d/XM1e4fnviQD9oa7XQ8i3AoGAO1fW\n+SHwnxC42kw6N9kGr2Z5HFS4wmgmJ+X/t4JzMP3AQR4+zps4Jy3DSZupfGJY7Sw8\nPwd3fET2eNEz/2yMm31NX6Gsf5YA0r8ABIlP3WIsQagIo4U14V5YJBDPVHdEMqsg\nKhh10QmwnvLvF9Cc9FlcU2SM+ChUEcnVAWxpM08CgYEAgxhZFTlvfZc+u6PtMNXK\naQI1P4psD113qQFW2CdDaLDat4FYY8lB6KaDmJUoew9JtUJtMvrqCk5+E+jrSbQN\neurPVmKTWNWXjJQHQZGtifd4r+rE0yRVCR+gLEniV/Q2y/Ng/2ColRfGDMPp90PX\neTO69XgY5bWpPzvjp18W//o=\n-----END PRIVATE KEY-----\n",
+  "client_email": "pubsub@amazing-limiter-382016.iam.gserviceaccount.com",
+  "client_id": "100378417746459445925",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/pubsub%40amazing-limiter-382016.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

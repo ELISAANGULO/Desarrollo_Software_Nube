@@ -1,15 +1,16 @@
+from flask_sqlalchemy import SQLAlchemy
 from marshmallow import fields, Schema
-from sqlalchemy import  Column, Integer, String, Boolean, Text,ForeignKey,Date, DateTime, create_engine
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from sqlalchemy import create_engine, Column, Integer, String, Boolean, Text,ForeignKey,Date, DateTime
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 # Conexión a la base de datos
+#engine = create_engine('postgresql://postgres:postgres@localhost:5432/conversor')
 db_uri = 'postgresql://postgres:andes@35.196.5.117:5432/conversor'
 engine = create_engine(db_uri)
-#engine = create_engine('postgresql://postgres:postgres@localhost:5432/conversor')
-Base = declarative_base()
 Session = sessionmaker(bind=engine)
-
+Base = declarative_base()
 
 class Usuario(Base):
     __tablename__ = 'usuarios'
@@ -42,15 +43,12 @@ class UsuarioSchema(Schema):
 
 class ConversionSchema(Schema):
     id = fields.Integer()
-    nombre_archivo_original = fields.Str()
-    nombre_archivo_original_gcp = fields.Str()
-    nombre_archivo_convertido_gcp = fields.Str()
-    archivo_base64_original = fields.Str()
-    archivo__base64_convertido = fields.Str()
+    nombre_archivo = fields.Str()
+    archivo_base = fields.Str()
     extension_original = fields.Str()
+    archivo_convertido = fields.Str()
     extension_destino = fields.Str()
     fecha_subida = fields.Str()
-    fecha_modificacion = fields.Str()
     status = fields.Str()
     disponible = fields.Boolean()
     usuario_id = fields.Integer()

@@ -1,7 +1,7 @@
 from google.cloud import storage
 
 
-bucketName="desarrollocloud2018461201105"
+bucketName = "desarrollocloud2018461201106"
 
 def upload_to_bucket(fileName, path_to_file,folder):
 
