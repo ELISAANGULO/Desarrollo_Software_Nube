@@ -90,8 +90,10 @@ class VistaConvertir(Resource):
                       "nombre_archivo_original_gcp" : nombre_original_gcp,
                       "nombre_archivo_convertido_gcp": fileForGCP,
                       "usuario_id": usuario_id}
+            
+            
             myThread = threading.Thread(
-            target=rabbit_connection.publishMessage, args=(conver, ""))
+                 target=rabbit_connection.enviarMensaje, args=(str( conver), ""))
             myThread.start()
             return {
                 'mensaje': 'El archivo ha sido cargado con exito, podrá acceder a él en algunos minutos'
@@ -139,8 +141,8 @@ class VistaFiles(Resource):
             return {"message" : f"La tarea de conversión con nombre: {filename}, no existe o no tiene autorización para acceder a ella"}, 409
         if conversion.status != "processed":
             return {"message" : f"La tarea de conversión con nombre: {filename}, aún no ha sido procesada"}, 409
-        base_url_original_gcp = "https://storage.googleapis.com/desarrollocloud2018461201105/Originales/"
-        base_url_convertido_gcp = "https://storage.googleapis.com/desarrollocloud2018461201105/Convertidos/"
+        base_url_original_gcp = "https://storage.googleapis.com/desarrollocloud2018461201106/Originales/"
+        base_url_convertido_gcp = "https://storage.googleapis.com/desarrollocloud2018461201106/Convertidos/"
         url_archivo_original = base_url_original_gcp + conversion.nombre_archivo_original_gcp
         url_archivo_convertido = base_url_convertido_gcp + conversion.nombre_archivo_convertido_gcp
         response = {"nombre_archivo" : conversion.nombre_archivo_original, "url_archivo_original" : url_archivo_original, "url_archivo_convertido" : url_archivo_convertido}
