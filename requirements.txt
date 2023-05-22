@@ -9,7 +9,7 @@ flask_restful
 flask_jwt_extended
 numpy
 google-cloud-storage
-tarfile
+xtarfile
 pika
 google-cloud
 python-dotenv
